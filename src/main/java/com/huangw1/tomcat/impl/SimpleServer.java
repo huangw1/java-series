@@ -3,6 +3,7 @@ package com.huangw1.tomcat.impl;
 import com.huangw1.tomcat.Server;
 import com.huangw1.tomcat.ServerStatus;
 import com.huangw1.tomcat.config.ServerConfig;
+import com.huangw1.tomcat.io.Connector;
 import com.huangw1.tomcat.io.IoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Created by huangw1 on 2018/5/7.
@@ -20,30 +22,27 @@ public class SimpleServer implements Server {
 
     private volatile ServerStatus serverStatus = ServerStatus.STOP;
 
-    private ServerSocket serverSocket;
+    private final List<Connector> connectorList;
 
     private int port;
 
-    public SimpleServer(ServerConfig config) {
-        this.port = config.getPort();
+    public SimpleServer(ServerConfig serverConfig, List<Connector> connectorList) {
+        this.port = serverConfig.getPort();
+        this.connectorList = connectorList;
     }
 
     @Override
     public void start() throws IOException {
-        serverSocket = new ServerSocket(port);
+        connectorList.stream().forEach(connector -> connector.start());
         serverStatus = ServerStatus.START;
-
-        while(true) {
-            Socket socket = serverSocket.accept();
-            logger.info("新增连接：{}:{}", socket.getInetAddress(), port);
-            IoUtil.closeQuietly(socket);
-        }
+        logger.info("Server start...");
     }
 
     @Override
     public void stop() {
-        IoUtil.closeQuietly(serverSocket);
+        connectorList.stream().forEach(connector -> connector.stop());
         serverStatus = ServerStatus.STOP;
+        logger.info("Server stop...");
     }
 
     @Override

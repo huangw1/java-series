@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 /**
  * Created by huangw1 on 2018/5/7.
  */
-public class TestServerAcceptRequest {
+public class TestServerAcceptRequest extends TestServerBase {
 
     private static Logger logger = LoggerFactory.getLogger(TestServerAcceptRequest.class);
 
@@ -35,23 +35,8 @@ public class TestServerAcceptRequest {
     @Test
     public void testServerAcceptRequest() {
         if(server.getStatus().equals(ServerStatus.STOP)) {
-            // 线程防止阻塞
-            new Thread(() -> {
-                try {
-                    server.start();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }).start();
-
-            while(server.getStatus().equals(ServerStatus.STOP)) {
-                logger.info("等待服务启动...");
-                try {
-                    Thread.sleep(TIMEOUT);
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
+            startServer(server);
+            waitServerStart(server);
 
             Socket socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress("localhost", ServerConfig.DEFAULT_PORT);
