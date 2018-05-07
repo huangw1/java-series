@@ -4,17 +4,19 @@ import com.huangw1.tomcat.Server;
 import com.huangw1.tomcat.ServerStatus;
 import com.huangw1.tomcat.config.ServerConfig;
 import com.huangw1.tomcat.io.Connector;
-import com.huangw1.tomcat.io.IoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
 
 /**
  * Created by huangw1 on 2018/5/7.
+ */
+
+/**
+ * 责任分离
+ * Server 负责管理组件的生命周期
  */
 public class SimpleServer implements Server {
 
@@ -24,10 +26,7 @@ public class SimpleServer implements Server {
 
     private final List<Connector> connectorList;
 
-    private int port;
-
-    public SimpleServer(ServerConfig serverConfig, List<Connector> connectorList) {
-        this.port = serverConfig.getPort();
+    public SimpleServer(List<Connector> connectorList) {
         this.connectorList = connectorList;
     }
 
@@ -51,7 +50,7 @@ public class SimpleServer implements Server {
     }
 
     @Override
-    public int getPort() {
-        return port;
+    public List<Connector> getConnectorList() {
+        return connectorList;
     }
 }

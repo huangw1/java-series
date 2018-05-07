@@ -5,14 +5,9 @@ import com.huangw1.tomcat.LifeCycle;
 /**
  * Created by huangw1 on 2018/5/7.
  */
-public abstract class Connector implements LifeCycle {
-    @Override
-    public void start() {
-        init();
-        acceptConnect();
-    }
+public interface Connector extends LifeCycle {
 
-    public abstract void init() throws ConnectorException;
+    int getPort();
 
-    public abstract void acceptConnect() throws ConnectorException;
+    String getHost();
 }

@@ -1,6 +1,8 @@
 package com.huangw1.tomcat;
 
 import com.huangw1.tomcat.config.ServerConfig;
+import com.huangw1.tomcat.event.impl.SocketEventListener;
+import com.huangw1.tomcat.handler.impl.EchoHandler;
 import com.huangw1.tomcat.impl.SimpleServer;
 import com.huangw1.tomcat.io.Connector;
 import com.huangw1.tomcat.io.impl.socket.SocketConnectorConfig;
@@ -16,7 +18,8 @@ public class ServerFactory {
 
     public static Server getServer(ServerConfig serverConfig) {
         List<Connector> connectorList = new ArrayList<>();
-        connectorList.add(new SocketConnectorFactory(new SocketConnectorConfig(serverConfig.getPort())).getConnector());
-        return new SimpleServer(serverConfig, connectorList);
+        SocketEventListener socketEventListener = new SocketEventListener(new EchoHandler());
+        connectorList.add(new SocketConnectorFactory(new SocketConnectorConfig(serverConfig.getPort()), socketEventListener).getConnector());
+        return new SimpleServer(connectorList);
     }
 }

@@ -1,6 +1,6 @@
 package com.huangw1.tomcat.io.impl.socket;
 
-import com.huangw1.tomcat.io.Connector;
+import com.huangw1.tomcat.event.impl.SocketEventListener;
 import com.huangw1.tomcat.io.ConnectorFactory;
 
 /**
@@ -9,13 +9,15 @@ import com.huangw1.tomcat.io.ConnectorFactory;
 public class SocketConnectorFactory implements ConnectorFactory {
 
     private final SocketConnectorConfig socketConnectorConfig;
+    private final SocketEventListener socketEventListener;
 
-    public SocketConnectorFactory(SocketConnectorConfig socketConnectorConfig) {
+    public SocketConnectorFactory(SocketConnectorConfig socketConnectorConfig, SocketEventListener socketEventListener) {
         this.socketConnectorConfig = socketConnectorConfig;
+        this.socketEventListener = socketEventListener;
     }
 
     @Override
-    public Connector getConnector() {
-        return new SocketConnector(socketConnectorConfig.getPort());
+    public SocketConnector getConnector() {
+        return new SocketConnector(socketConnectorConfig.getPort(), socketEventListener);
     }
 }
